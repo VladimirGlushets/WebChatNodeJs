@@ -1,6 +1,6 @@
 var crypto = require('crypto');
 
-var mongoose = require('libs/mongoose');
+var mongoose = require('../libs/mongoose');
 var Schema = mongoose.Schema;
 
 var schema = new Schema({
@@ -18,7 +18,7 @@ var schema = new Schema({
     salt: {
         type: String,
         required: true
-    }
+    },
 
     created: {
         type: Date,
@@ -41,7 +41,7 @@ schema.virtual('password')
         return this._plainPassword;
     });
 
-schema.methodts.checkPassword = function(password){
+schema.methods.checkPassword = function(password){
   return this.encryptPassword(password) === this.hashedPassword;
 };
 

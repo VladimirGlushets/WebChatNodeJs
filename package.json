@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"    
+    "start": "node ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.15.2",
@@ -11,7 +11,18 @@
     "debug": "~2.2.0",
     "ejs": "~2.5.2",
     "express": "~4.14.0",
+    "mongodb": "^2.2.16",
     "morgan": "~1.7.0",
     "serve-favicon": "~2.3.0"
+  },
+  "devDependencies": {
+    "async": "^2.1.4",
+    "async-series": "0.0.1",
+    "config": "^1.24.0",
+    "crypto": "0.0.3",
+    "ejs-locals": "^1.0.2",
+    "mongodb": "^2.2.16",
+    "mongoose": "^4.7.5",
+    "nconf": "^0.8.4"
   }
 }

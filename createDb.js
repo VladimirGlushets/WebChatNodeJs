@@ -1,7 +1,7 @@
 //// 3 вариант
-var mongoose = require('libs/mongoose');
 var async = require('async');
-var User = require('models/user').User;
+var User = require('./models/user').User;
+var mongoose = require('./libs/mongoose');
 
 // 1. drop db
 // 2. create & save users
@@ -14,7 +14,10 @@ async.series([
   createUsers,
   close
 ], function(err, results){
-  console.log(arguments);
+    console.log("Test");
+    if(err){throw err;}
+
+  console.log(results);
 });
 
 function open(callback) {
@@ -35,6 +38,9 @@ function createUsers(callback) {
                 password: 'supervasya'
             });
             vasya.save(function(err) {
+                if(err){
+                    throw err;
+                }
                 callback(err, vasya);
             });
         },
@@ -61,7 +67,9 @@ function createUsers(callback) {
 
 function close(callback) {
     // 3. close connection
-    mongoose.disconnect();
+    mongoose.disconnect(callback);
+
+    //mongoose.connection.close()
 }
 
 
