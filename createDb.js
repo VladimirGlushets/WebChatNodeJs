@@ -7,25 +7,112 @@ var User = require('models/user').User;
 // 2. create & save users
 // 3. close connection
 
-var db = mongoose.connection.db; // уровень mongodb native driver
-
-// console.log(mongoose.connection.readyState);  // 2-connecting т.к. js однопоточный, то нужно использовать событие
-
-mongoose.connection.on('open', function() {
-  // 1. drop db
-    db.dropDatabase(function(err) {
-        if (err) throw err;
-        console.log('OK');
-
-        // 2. create & save users
-        var vasya = new User({username: 'Вася', password: 'supervasya'});
-        var petya = new User({username: 'Петя', password: '123'});
-        var admin = new User({username: 'admin', password: 'admin'});
-
-        // 3. close connection
-        mongoose.disconnect();
-    });
+// запускаем функции друг за другом
+async.series([
+  open,
+  dropDatabase,
+  createUsers,
+  close
+], function(err, results){
+  console.log(arguments);
 });
+
+function open(callback) {
+    mongoose.connection.on('open', callback);
+}
+
+function dropDatabase(callback) {
+    var db = mongoose.connection.db; // уровень mongodb native driver
+    db.dropDatabase(callback);
+}
+
+function createUsers(callback) {
+    // 2. create & save users
+    async.parallel([
+        function(callback) {
+            var vasya = new User({
+                username: 'Вася',
+                password: 'supervasya'
+            });
+            vasya.save(function(err) {
+                callback(err, vasya);
+            });
+        },
+        function(callback) {
+            var petya = new User({
+                username: 'Петя',
+                password: '123'
+            });
+            petya.save(function(err) {
+                callback(err, petya);
+            });
+        },
+        function(callback) {
+            var admin = new User({
+                username: 'admin',
+                password: 'admin'
+            });
+            admin.save(function(err) {
+                callback(err, admin);
+            });
+        }
+    ], callback);
+}
+
+function close(callback) {
+    // 3. close connection
+    mongoose.disconnect();
+}
+
+
+
+//// 3 вариант
+// mongoose.connection.on('open', function() {
+//     var db = mongoose.connection.db; // уровень mongodb native driver
+//     // 1. drop db
+//     db.dropDatabase(function(err) {
+//         if (err) throw err;
+//         console.log('OK');
+//
+//         // 2. create & save users
+//         async.parallel([
+//                 function(callback) {
+//                     var vasya = new User({
+//                         username: 'Вася',
+//                         password: 'supervasya'
+//                     });
+//                     vasya.save(function(err) {
+//                         callback(err, vasya);
+//                     });
+//                 },
+//                 function(callback) {
+//                     var petya = new User({
+//                         username: 'Петя',
+//                         password: '123'
+//                     });
+//                     petya.save(function(err) {
+//                         callback(err, petya);
+//                     });
+//                 },
+//                 function(callback) {
+//                     var admin = new User({
+//                         username: 'admin',
+//                         password: 'admin'
+//                     });
+//                     admin.save(function(err) {
+//                         callback(err, admin);
+//                     });
+//                 }
+//             ],
+//             function(err, results) {
+//                 console.log(arguments);
+//
+//                 // 3. close connection
+//                 mongoose.disconnect();
+//             }
+//         );
+//     });
+// });
 
 
 //// 2 вариант
